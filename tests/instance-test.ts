@@ -16,12 +16,16 @@ describe("Instance", () => {
     describe("client", () => {
         it("should create a client on this mastodon instance", (ok) => {
             fetch.mockResponseOnce(JSON.stringify({
+                client_id: "abcdxyz",
+                client_secret: "AAABBBCCC",
                 id: "12345",
             }));
             const instance = new Instance("mstdn.otiai10.com");
             instance.client({name: "TestTest", scopes: "read write"}).then((client) => {
                 expect(client).toBeInstanceOf(Client);
                 expect(client.idStr).toBe("12345");
+                expect(client.id).toBe("abcdxyz");
+                expect(client.secret).toBe("AAABBBCCC");
                 ok();
             });
         });
