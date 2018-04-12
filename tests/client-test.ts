@@ -24,4 +24,16 @@ describe("Client", () => {
             });
         });
     });
+
+    describe("authURL", () => {
+        it("should return a URL for /oauth/authorize", (ok) => {
+            fetch.mockResponseOnce(JSON.stringify({id: "12", client_id: "1234", client_secret: "abcde"}));
+            instance.client({name: "test01", scopes: "read write"}).then((client) => {
+                const rawurl = client.authURL({scopes: ["read", "write"], redirect: "http://localhost:8080"});
+                /* tslint:disable max-line-length */
+                expect(rawurl).toBe("https://mstdn.otiai10.com/oauth/authorize?client_id=1234&response_type=code&scope=read+write&redirect_uri=http%3A%2F%2Flocalhost%3A8080");
+                ok();
+            });
+        });
+    });
 });

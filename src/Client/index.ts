@@ -25,6 +25,29 @@ export default class Client {
     }
 
     /**
+     * authURL generates a URL for "/oauth/authorize" endpoint.
+     * If the application is browser-based, it may `window.open` this URL.
+     * If nodejs application, let the user copy the "authorization_code"
+     * which is specified by Mastodon instance webpage, and paste the code
+     * to your application.
+     * @param params
+     */
+    public authURL(params: {scopes: string[], redirect?: string }): string {
+
+        params.redirect = params.redirect || "urn:ietf:wg:oauth:2.0:oob";
+
+        const url = new URL(this.rawurl);
+        url.pathname = "/oauth/authorize";
+
+        url.searchParams.append("client_id", this.id);
+        url.searchParams.append("response_type", "code");
+        url.searchParams.append("scope", params.scopes.join(" "));
+        url.searchParams.append("redirect_uri", params.redirect);
+
+        return url.href;
+    }
+
+    /**
      * tokenByPassword is never recommended because consumer must know the users' email/password.
      * @param email
      * @param password
