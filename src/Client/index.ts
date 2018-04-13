@@ -37,7 +37,7 @@ export default class Client {
      * to your application.
      * @param params
      */
-    public authURL(params: {scopes: string[]}): string {
+    public authURL(params: {scopes: string[], state?: string}): string {
 
         const url = new URL(this.rawurl);
         url.pathname = "/oauth/authorize";
@@ -45,6 +45,10 @@ export default class Client {
         url.searchParams.append("client_id", this.id);
         url.searchParams.append("response_type", "code");
         url.searchParams.append("redirect_uri", this.redirectURI);
+
+        if (typeof params.state !== "undefined") {
+            url.searchParams.append("state", params.state);
+        }
 
         url.searchParams.append("scope", params.scopes.join(" "));
 
