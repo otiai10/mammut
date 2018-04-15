@@ -1,4 +1,5 @@
 import Client from "../Client";
+import {httperrorcheck} from "../utils";
 
 export declare interface IClientOption {
     name: string;
@@ -34,7 +35,7 @@ export default class Instance {
         formdata.append("scopes", opt.scopes.join(" "));
 
         return fetch(url.href, {body: formdata, method: "POST"})
-        .then((res: Response) => res.json())
+        .then(httperrorcheck)
         .then((config: any) => Promise.resolve(new Client({
             rawurl: this.url.toString(),
             redirect_uri: opt.redirect,
