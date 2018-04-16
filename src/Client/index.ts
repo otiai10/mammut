@@ -8,6 +8,7 @@ export interface IClientConfig {
     client_secret: string;
     rawurl: string;
     redirect_uri?: string;
+    accessToken?: IAccessTokenData;
 }
 
 export default class Client {
@@ -28,6 +29,9 @@ export default class Client {
         this.name = config.name;
         this.rawurl = config.rawurl;
         this.redirectURI = config.redirect_uri || "urn:ietf:wg:oauth:2.0:oob";
+        if (config.accessToken) {
+            this.accessToken = new AccessToken(config.accessToken);
+        }
     }
 
     /**
@@ -104,6 +108,28 @@ export default class Client {
         .then(httperrorcheck)
         .then((data: IAccessTokenData) => Promise.resolve(new AccessToken(data)));
 
+    }
+
+    public toot(status: string): Promise<any> {
+
+        if (!this.accessToken) {
+            return Promise.reject({error: "this client doesn't have AccessToken"});
+        }
+
+        const url = new URL(this.rawurl);
+        url.pathname = "/api/v1/statuses";
+
+        const formdata = new FormData();
+        // We don't need to encode this status as long as we use FormData
+        formdata.append("status", status);
+
+        return fetch(url.href, {
+            body: formdata,
+            headers: {
+                Authorization: `Bearer ${this.accessToken.token}`,
+            },
+            method: "POST",
+        }).then(httperrorcheck);
     }
 
     private setAccessToken(token: AccessToken): Promise<Client> {
