@@ -49,6 +49,9 @@ export default class Client {
         if (typeof params.state !== "undefined") {
             url.searchParams.append("state", params.state);
         }
+        if (typeof params.scopes === "undefined") {
+            params.scopes = [];
+        }
 
         url.searchParams.append("scope", params.scopes.join(" "));
 

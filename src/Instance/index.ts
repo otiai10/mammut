@@ -25,6 +25,7 @@ export default class Instance {
     public client(opt: IClientOption): Promise<Client> {
 
         opt.redirect = opt.redirect || "urn:ietf:wg:oauth:2.0:oob";
+        opt.scopes = opt.scopes || [];
 
         const url = new URL(this.url.href);
         url.pathname = "/api/v1/apps";

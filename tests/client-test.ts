@@ -14,7 +14,7 @@ describe("Client", () => {
     describe("tokenByPassword", () => {
         it("should return AccessToken with promise", (ok) => {
             fetch.mockResponseOnce(JSON.stringify({id: "12", client_id: "1234", client_secret: "abcde"}));
-            instance.client({name: "test01", scopes: "read write"}).then((client) => {
+            instance.client({name: "test01", scopes: ["read", "write"]}).then((client) => {
                 fetch.mockResponseOnce(JSON.stringify({access_token: "xyzw", scope: "read write"}));
                 return client.tokenByPassword("otiai10@foobar.com", "foobarbaz");
             }).then((token) => {
@@ -28,10 +28,14 @@ describe("Client", () => {
     describe("authURL", () => {
         it("should return a URL for /oauth/authorize", (ok) => {
             fetch.mockResponseOnce(JSON.stringify({id: "12", client_id: "1234", client_secret: "abcde"}));
-            instance.client({name: "test01", scopes: "read write"}).then((client) => {
-                const rawurl = client.authURL({scopes: ["read", "write"], redirect: "http://localhost:8080"});
+            instance.client({
+                name: "test01",
+                redirect: "http://localhost:8080",
+                scopes: ["read", "write"],
+            }).then((client) => {
+                const rawurl = client.authURL({scopes: ["read", "write"]});
                 /* tslint:disable max-line-length */
-                expect(rawurl).toBe("https://mstdn.otiai10.com/oauth/authorize?client_id=1234&response_type=code&scope=read+write&redirect_uri=http%3A%2F%2Flocalhost%3A8080");
+                expect(rawurl).toBe("https://mstdn.otiai10.com/oauth/authorize?client_id=1234&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080&scope=read+write");
                 ok();
             });
         });
