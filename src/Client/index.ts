@@ -1,4 +1,5 @@
 import AccessToken, { IAccessTokenData } from "../AccessToken";
+import {httperrorcheck} from "../utils";
 
 export interface IClientConfig {
     name: string;
@@ -74,7 +75,7 @@ export default class Client {
         formdata.append("code", code);
 
         return fetch(url.href, {body: formdata, method: "POST"})
-        .then((res: Response) => res.json())
+        .then(httperrorcheck)
         .then((data: IAccessTokenData) => Promise.resolve(new AccessToken(data)))
         .then((token: AccessToken) => this.setAccessToken(token));
     }
@@ -100,7 +101,7 @@ export default class Client {
         formdata.append("password", password);
 
         return fetch(url.href, {body: formdata, method: "POST"})
-        .then((res: Response) => res.json())
+        .then(httperrorcheck)
         .then((data: IAccessTokenData) => Promise.resolve(new AccessToken(data)));
 
     }
