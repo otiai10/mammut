@@ -1,6 +1,8 @@
 import AccessToken, { IAccessTokenData } from "../AccessToken";
 import {httperrorcheck} from "../utils";
 
+import {IAccount} from "../Model";
+
 export interface IClientConfig {
     name: string;
     id: string;
@@ -129,6 +131,27 @@ export default class Client {
                 Authorization: `Bearer ${this.accessToken.token}`,
             },
             method: "POST",
+        }).then(httperrorcheck);
+    }
+
+    /**
+     * fetch the credential user account,
+     * representing `GET /api/v1/accounts/verify_credentials`
+     */
+    public myself(): Promise<IAccount> {
+
+        if (!this.accessToken) {
+            return Promise.reject({error: "this client doesn't have AccessToken"});
+        }
+
+        const url = new URL(this.rawurl);
+        url.pathname = "/api/v1/accounts/verify_credentials";
+
+        return fetch(url.href, {
+            headers: {
+                Authorization: `Bearer ${this.accessToken.token}`,
+            },
+            method: "GET",
         }).then(httperrorcheck);
     }
 
